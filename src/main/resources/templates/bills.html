@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Bills</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Bills</h1>
+        <a th:href="@{/dashboard}" class="btn">Home</a>
+        <a th:href="@{/bills/add(page=${currentPage})}" class="btn">Add New Bill</a>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Patient Name</th>
+                    <th>Amount</th>
+                    <th>Age</th>
+                    <th>Address</th>
+                    <th>Contact Number</th>
+                    <th>Gender</th>
+                    <th>Medical History</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="bill : ${billsPage.content}">
+                    <td th:text="${bill.patientName}">Patient Name</td>
+                    <td th:text="${bill.amount}">Amount</td>
+                    <td th:text="${bill.age}">Age</td>
+                    <td th:text="${bill.address}">Address</td>
+                    <td th:text="${bill.contactNumber}">Contact Number</td>
+                    <td th:text="${bill.gender}">Gender</td>
+                    <td th:text="${bill.medicalHistory}">Medical History</td>
+                    <td>
+                        <a th:href="@{/bills/editBill/{id}(id=${bill.id}, page=${currentPage})}" class="btn">Edit</a>
+                        <a th:href="@{/bills/deleteBill/{id}(id=${bill.id}, page=${currentPage})}" class="btn">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="pagination">
+            <span th:if="${billsPage.hasPrevious()}">
+                <a th:href="@{/bills(page=${billsPage.number - 1})}">Previous</a>
+            </span>
+            <span th:each="i : ${#numbers.sequence(0, billsPage.totalPages - 1)}">
+                <a th:href="@{/bills(page=${i})}" th:text="${i + 1}" th:classappend="${i == billsPage.number} ? 'current'"></a>
+            </span>
+            <span th:if="${billsPage.hasNext()}">
+                <a th:href="@{/bills(page=${billsPage.number + 1})}">Next</a>
+            </span>
+        </div>
+    </div>
+</body>
+</html>

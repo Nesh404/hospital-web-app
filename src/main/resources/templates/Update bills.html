@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Bills</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Patient Bills</h1>
+        <p>Welcome, <span th:text="${session.username}"></span>!</p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Patient Name
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="bill : ${bills}">
+                    <td th:text="${bill.patientName}"></td>
+                    <td th:text="${bill.amount}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Hardware Monitoring</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container {
+            margin-top: 50px;
+        }
+        .card {
+            margin-bottom: 20px;
+            border: 1px solid #007bff;
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+        }
+        .card-body {
+            text-align: center;
+        }
+        .card-body h3 {
+            color: #007bff;
+        }
+        .chart-container {
+            position: relative;
+            height: 40vh;
+            width: 80vw;
+            margin: auto;
+        }
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+            width: 300px;
+            margin: auto;
+        }
+        .btn-home {
+            display: block;
+            width: 100px;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+        }
+        .btn-home:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a th:href="@{/dashboard}" class="btn-home">Home</a>
+        <h2 class="text-center">Hardware Monitoring</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Memory Usage</div>
+                    <div class="card-body">
+                        <div class="chart-wrapper">
+                            <canvas id="memoryChart"></canvas>
+                        </div>
+                        <h3 th:text="'Total Memory: ' + ${totalMemoryGB} + ' GB'"></h3>
+                        <h3 th:text="'Used Memory: ' + ${usedMemoryGB} + ' GB (' + ${memoryUsagePercentage} + '%)'"></h3>
+                        <h3 th:text="'Available Memory: ' + ${availableMemoryGB} + ' GB'"></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Disk Usage</div>
+                    <div class="card-body">
+                        <div class="chart-wrapper">
+                            <canvas id="diskChart"></canvas>
+                        </div>
+                        <h3 th:text="'Total Disk: ' + ${totalDiskGB} + ' GB'"></h3>
+                        <h3 th:text="'Used Disk: ' + ${usedDiskGB} + ' GB (' + ${diskUsagePercentage} + '%)'"></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const memoryCtx = document.getElementById('memoryChart').getContext('2d');
+            const diskCtx = document.getElementById('diskChart').getContext('2d');
+
+            // Fetching data from Thymeleaf variables
+            const usedMemoryGB = parseFloat("[[${usedMemoryGB}]]");
+            const availableMemoryGB = parseFloat("[[${availableMemoryGB}]]");
+            const usedDiskGB = parseFloat("[[${usedDiskGB}]]");
+            const availableDiskGB = parseFloat("[[${totalDiskGB}]]") - usedDiskGB;
+
+            const memoryData = {
+                labels: ['Used Memory', 'Available Memory'],
+                datasets: [{
+                    label: 'Memory Usage (GB)',
+                    data: [usedMemoryGB, availableMemoryGB],
+                    backgroundColor: ['#007bff', '#28a745'],
+                }]
+            };
+
+            const diskData = {
+                labels: ['Used Disk', 'Available Disk'],
+                datasets: [{
+                    label: 'Disk Usage (GB)',
+                    data: [usedDiskGB, availableDiskGB],
+                    backgroundColor: ['#007bff', '#28a745'],
+                }]
+            };
+
+            const memoryChart = new Chart(memoryCtx, {
+                type: 'pie',
+                data: memoryData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Memory Usage'
+                        }
+                    }
+                },
+            });
+
+            const diskChart = new Chart(diskCtx, {
+                type: 'pie',
+                data: diskData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Disk Usage'
+                        }
+                    }
+                },
+            });
+        });
+    </script>
+</body>
+</html>
